@@ -1,0 +1,9 @@
+transformers
+torch
+torchvision
+pandas
+torchaudio
+numpy
+librosa
+matplotlib
+tqdm

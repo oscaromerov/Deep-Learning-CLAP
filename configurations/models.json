@@ -1,0 +1,24 @@
+{
+    "models": [
+        {
+            "id": "laion/larger_clap_general",
+            "description": "General-purpose CLAP model"
+        },
+        {
+            "id": "laion/clap-htsat-fused",
+            "description": "CLAP model with fused text and audio features"
+        },
+        {
+            "id": "laion/clap-htsat-unfused",
+            "description": "CLAP model with unfused text and audio features"
+        },
+        {
+            "id": "laion/larger_clap_music",
+            "description": "CLAP model specialized for music"
+        },
+        {
+            "id": "laion/larger_clap_music_and_speech",
+            "description": "CLAP model for both music and speech"
+        }
+    ]
+}

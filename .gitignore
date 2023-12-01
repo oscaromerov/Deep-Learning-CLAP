@@ -1,0 +1,5 @@
+audios/
+venv/
+venv-clap/
+.DS_Store
+.idea/
