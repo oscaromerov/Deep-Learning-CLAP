@@ -71,6 +71,44 @@ class UrbanSound8kDataset(Dataset):
         waveform, _ = librosa.load(filepath, sr=None)
         label = self.labels[idx]
         return waveform, label
+
+
+class CustomAudioDataset(Dataset):
+    def __init__(self, audio_dir, metadata_path):
+        self.audio_dir = audio_dir
+        self.metadata_path = metadata_path
+        self.df = pd.read_csv(metadata_path)
+        self.labels = self.df['Sentiment'].values  # Adjust the column name based on your metadata
+        self.filenames = self.df['Audio_File'].values  # Adjust the column name based on your metadata
+        self.classes = self.df['Audio_File'].unique()
+
+    def get_waveform(self, idx):
+        audio_path = os.path.join(self.audio_dir, self.filenames[idx])
+        if not os.path.exists(audio_path):
+            raise RuntimeError(f"File not found: {audio_path}")
+
+        waveform, _ = librosa.load(audio_path, sr=None)
+        return waveform
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        waveform = self.get_waveform(idx)
+        label = self.labels[idx]
+        return waveform, label
+
+# Usage example:
+audio_dir = '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Epic_folder'
+metadata_path = '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Epic_folder/epic_music_labels.csv'  # Make sure your metadata has 'label' and 'filename' columns
+
+custom_dataset = CustomAudioDataset(audio_dir, metadata_path)
+
+# Get the first sample and unpack
+first_data = custom_dataset[0]
+features, label = first_data
+print(features, label)
+
 #
 #
 #
@@ -101,12 +139,12 @@ class UrbanSound8kDataset(Dataset):
 # print(features, labels)
 
 # # create dataset URBANSOUND8K
-urban_csv = 'audios/UrbanSound8K/metadata/UrbanSound8K.csv'
-urban_audio_dir = 'audios/UrbanSound8K/audio/'
-dataset = UrbanSound8kDataset(urban_csv, urban_audio_dir)
-#dataset = ESC_50(esc50_audio_dir, esc50_csv)
+# urban_csv = 'audios/UrbanSound8K/metadata/UrbanSound8K.csv'
+# urban_audio_dir = 'audios/UrbanSound8K/audio/'
+# dataset = UrbanSound8kDataset(urban_csv, urban_audio_dir)
+# #dataset = ESC_50(esc50_audio_dir, esc50_csv)
 
-# get first sample and unpack
-first_data = dataset[10]
-features, labels = first_data
-print(features, labels)
+# # get first sample and unpack
+# first_data = dataset[10]
+# features, labels = first_data
+# print(features, labels)
