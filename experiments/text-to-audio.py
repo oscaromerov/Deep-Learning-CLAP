@@ -10,25 +10,25 @@ from tqdm.auto import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Initialize the ESC50Dataset
-# metadata_path = 'audios/ESC-50/ESC-50-master/meta/esc50.csv'
-# audio_dir = 'audios/ESC-50/ESC-50-master/audio/'
-# dataset = ESC50Dataset(metadata_path, audio_dir)
+metadata_path = 'audios/ESC-50/ESC-50-master/meta/esc50.csv'
+audio_dir = 'audios/ESC-50/ESC-50-master/audio/'
+dataset = ESC50Dataset(metadata_path, audio_dir)
 
 # Initialize the GTZANDataset
-metadata_path = 'audios/GTZAN/features_30_sec.csv'
-audio_dir = 'audios/GTZAN/genres_original/'
-dataset = GTZANDataset(metadata_path, audio_dir)
+# metadata_path = 'audios/GTZAN/features_30_sec.csv'
+# audio_dir = 'audios/GTZAN/genres_original/'
+# dataset = GTZANDataset(metadata_path, audio_dir)
 
 
-# model_id = "laion/clap-htsat-fused"
-model_id = "laion/larger_clap_music"
+model_id = "laion/clap-htsat-fused"
+# model_id = "laion/larger_clap_music"
 
 # we initialize model and audio processor
 processor = ClapProcessor.from_pretrained(model_id)
 model = ClapModel.from_pretrained(model_id).to(device)
 
 # Process a text query
-texts = ['A chill jazz song']
+texts = ['a dog barking']
 inputs_text = processor(text=texts, return_tensors="pt", padding=True)
 inputs_text = {key: value.to(device) for key, value in inputs_text.items()}
 
@@ -38,7 +38,8 @@ with torch.inference_mode():
 
 
 # Get a list of all items in the dataset
-all_items = list(range(len(dataset)+1))
+print(len(dataset))
+all_items = list(range(len(dataset)))
 #all_items = list(range(16))
 # sample_idx = np.random.randint(0, len(dataset)+1, 100).tolist()
 # sample_idx = list(range(16))
