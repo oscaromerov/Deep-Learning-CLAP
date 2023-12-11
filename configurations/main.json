@@ -1,0 +1,32 @@
+{
+    "experiments": [
+        "Zero-Shot Audio Classification",
+        "Text to Audio Retrieval",
+        "Fine-tune Audio Classification"
+    ],
+    "datasets": [
+        "ESC50",
+        "GTZAN",
+        "MusicSentiment"
+    ],
+    "models": [
+        "laion/clap-htsat-unfused",
+        "laion/clap-htsat-fused",
+        "laion/larger_clap_music",
+        "laion/larger_clap_music_and_speech"
+    ],
+    "configurations": {
+        "ESC50": {
+            "metadata_path": "audios/ESC-50/ESC-50-master/meta/esc50.csv",
+            "audio_dir": "audios/ESC-50/ESC-50-master/audio"
+        },
+        "GTZAN": {
+            "metadata_path": "audios/GTZAN/features_30_sec.csv",
+            "audio_dir": "audios/GTZAN/genres_original"
+        },
+        "MusicSentiment": {
+            "metadata_path": "audios/emotions/emotions_music_labels.csv",
+            "audio_dir": "audios/emotions"
+        }
+    }
+}

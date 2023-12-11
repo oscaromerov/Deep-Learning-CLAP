@@ -13,25 +13,43 @@
         "pop": "This is a pop song with catchy melodies and a repetitive chorus",
         "reggae": "This is a reggae track with a laid-back rhythm and offbeat guitar chords",
         "rock": "This is a rock song with electric guitars and a strong backbeat"
+      },
+      "simple_labels": {
+        "blues": "This audio clip is a blues song",
+        "classical": "This audio clip is a classical song",
+        "country": "This audio clip is a country song",
+        "disco": "This audio clip is a disco song",
+        "hiphop": "This audio clip is a hiphop song",
+        "jazz": "This audio clip is a jazz song",
+        "metal": "This audio clip is a metal song",
+        "pop": "This audio clip is a pop song",
+        "reggae": "This audio clip is a reggae song",
+        "rock": "This audio clip is a rock song"
       }
     },
-    "MusicSentiment": {
-      "original_labels": ["happy", "sad", "energetic", "calm"],
-      "augmented_labels": {
-        "happy": ["happy", "joyful", "upbeat"],
-        "sad": ["sad", "melancholic", "heartbroken"],
-        "energetic": ["energetic", "lively", "dynamic"],
-        "calm": ["calm", "soothing", "relaxed"]
-      }
+  "MusicSentiment": {
+    "original_labels": ["happy", "sad", "epic", "suspense"],
+    "augmented_labels": {
+      "happy": "This audio makes me feel happy",
+      "sad": "This audio makes me feel sad and down",
+      "epic": "This audio makes me feel epic and powerful",
+      "suspense": "This audio makes me feel suspenseful and tense"
     },
-"ESC50": {
-  "original_labels": ["airplane", "breathing", "brushing_teeth", "can_opening", "car_horn", "cat", "chainsaw", "chirping_birds",
+      "simple_labels": {
+        "happy": "This audio clip is happy",
+        "sad": "This audio clip is sad",
+        "epic": "This audio clip is epic",
+        "suspense": "This audio clip is suspense"
+    }
+    },
+    "ESC50": {
+      "original_labels": ["airplane", "breathing", "brushing_teeth", "can_opening", "car_horn", "cat", "chainsaw", "chirping_birds",
                       "church_bells", "clapping", "clock_alarm", "clock_tick", "coughing", "cow", "crackling_fire", "crickets",
                       "crow", "crying_baby", "dog", "door_wood_creaks", "door_wood_knock", "drinking_sipping", "engine", "fireworks",
                       "footsteps", "frog", "glass_breaking", "hand_saw", "helicopter", "hen", "insects", "keyboard_typing", "laughing",
                       "mouse_click", "pig", "pouring_water", "rain", "rooster", "sea_waves", "sheep", "siren", "sneezing", "snoring",
                       "thunderstorm", "toilet_flush", "train", "vacuum_cleaner", "washing_machine", "water_drops", "wind"],
-  "augmented_labels": {
+      "augmented_labels": {
         "airplane": "An airplane is flying in the sky",
         "breathing": "A person is breathing heavily",
         "brushing_teeth": "A person is brushing his teeth",
@@ -82,18 +100,59 @@
         "washing_machine": "A washing machine is running",
         "water_drops": "Water is dripping",
         "wind": "The wind is blowing"
-  }
-    },
-    "UrbanSound8K": {
-      "original_labels": ["siren", "car horn", "gun shot", "street music", "drilling"],
-      "augmented_labels": {
-        "siren": ["siren", "emergency siren", "alarm"],
-        "car horn": ["car horn", "honk", "traffic horn"],
-        "gun shot": ["gun shot", "firearm discharge", "bang"],
-        "street music": ["street music", "busker performance", "urban melody"],
-        "drilling": ["drilling", "construction noise", "jackhammer"]
+      },
+      "simple_labels": {
+        "airplane": "This is a sound of an airplane",
+        "breathing": "This is a sound of breathing",
+        "brushing_teeth": "This is a sound of brushing teeth",
+        "can_opening": "This is a sound of opening a can",
+        "car_horn": "This is a sound of a car horn",
+        "cat": "This is a sound of a cat",
+        "chainsaw": "This is a sound of a chainsaw",
+        "chirping_birds": "This is a sound of chirping birds",
+        "church_bells": "This is a sound of church bells",
+        "clapping": "This is a sound of clapping",
+        "clock_alarm": "This is a sound of an alarm clock",
+        "clock_tick": "This is a sound of a clock ticking",
+        "coughing": "This is a sound of coughing",
+        "cow": "This is a sound of a cow",
+        "crackling_fire": "This is a sound of a crackling fire",
+        "crickets": "This is a sound of crickets",
+        "crow": "This is a sound of a crow",
+        "crying_baby": "This is a sound of a crying baby",
+        "dog": "This is a sound of a dog",
+        "door_wood_creaks": "This is a sound of a creaking door",
+        "door_wood_knock": "This is a sound of knocking on a door",
+        "drinking_sipping": "This is a sound of drinking",
+        "engine": "This is a sound of an engine",
+        "fireworks": "This is a sound of fireworks",
+        "footsteps": "This is a sound of footsteps",
+        "frog": "This is a sound of a frog",
+        "glass_breaking": "This is a sound of glass breaking",
+        "hand_saw": "This is a sound of a saw",
+        "helicopter": "This is a sound of a helicopter",
+        "hen": "This is a sound of a hen",
+        "insects": "This is a sound of insects",
+        "keyboard_typing": "This is a sound of typing on a keyboard",
+        "laughing": "This is a sound of laughing",
+        "mouse_click": "This is a sound of a mouse click",
+        "pig": "This is a sound of a pig",
+        "pouring_water": "This is a sound of pouring water",
+        "rain": "This is a sound of rain",
+        "rooster": "This is a sound of a rooster",
+        "sea_waves": "This is a sound of sea waves",
+        "sheep": "This is a sound of a sheep",
+        "siren": "This is a sound of a siren",
+        "sneezing": "This is a sound of sneezing",
+        "snoring": "This is a sound of snoring",
+        "thunderstorm": "This is a sound of a thunderstorm",
+        "toilet_flush": "This is a sound of a toilet flushing",
+        "train": "This is a sound of a train",
+        "vacuum_cleaner": "This is a sound of a vacuum cleaner",
+        "washing_machine": "This is a sound of a washing machine",
+        "water_drops": "This is a sound of water dripping",
+        "wind": "This is a sound of wind"
       }
     }
   }
 }
-

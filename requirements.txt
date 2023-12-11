@@ -1,6 +1,5 @@
 transformers
 torch
-torchvision
 pandas
 torchaudio
 numpy
@@ -9,4 +8,4 @@ matplotlib
 tqdm
 seaborn
 ipython
-laion-clap
+sounddevice
