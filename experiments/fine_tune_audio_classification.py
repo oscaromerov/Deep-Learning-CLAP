@@ -9,7 +9,7 @@ import time
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
-
+import librosa
 
 class FineTuneAudioClassifier:
     def __init__(self, metadata_path, audio_dir, dataset_class, model_id):
@@ -159,7 +159,23 @@ class FineTuneAudioClassifier:
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=self.classes)
         disp.plot(include_values=True, cmap='viridis', ax=None, xticks_rotation='vertical')
         plt.show()
+        
+    def predict(self, audio_path):
+        self.model.eval() #set the model to evaluation mode
+        # Load the waveform from the audio file using librosa
+        waveform = librosa.load(audio_path, sr=None)[0]
+        # Parse the waveform into CLAP's expected format
+        inputs_audio = self.processor(audios=waveform, sampling_rate=48000, return_tensors="pt", padding=True)
+        inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
+        #extract features
+        audio_features = self.model.get_audio_features(**inputs_audio)
 
+        with torch.no_grad(): #don't calculate gradients as we are not updating the weights during prediction
+            outputs = self.model(audio_features) 
+            _, predicted = torch.max(outputs, 1) #get the class with the highest probability
+            predicted_class = self.index_to_class[predicted.item()] # convert the class index to class name
+
+        return predicted_class
 
 # Initialize the FineTuneAudioClassifier
 # metadata_path = "audios/GTZAN/features_30_sec.csv"
