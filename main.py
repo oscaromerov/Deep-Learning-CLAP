@@ -62,9 +62,9 @@ def main():
     elif experiment == 'Fine-tune Audio Classification':
         fine_tune_audio_classifier = FineTuneAudioClassifier(**experiment_config)
         classifier = nn.Linear(512, fine_tune_audio_classifier.num_classes)
-        train_losses, valid_losses = fine_tune_audio_classifier.train(classifier, num_epochs=3)
+        train_losses = fine_tune_audio_classifier.train(classifier, num_epochs=3)
         avg_loss, accuracy, true_labels, pred_labels = fine_tune_audio_classifier.evaluate(classifier)
-        fine_tune_audio_classifier.plot_loss(train_losses, valid_losses)
+        fine_tune_audio_classifier.plot_loss(train_losses)
         fine_tune_audio_classifier.plot_confusion_matrix(true_labels, pred_labels)
 
     else:
