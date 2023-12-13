@@ -36,21 +36,12 @@ class FineTuneAudioClassifier:
         test_len = int(len(self.dataset) - train_len)
         labels = [item[1] for item in self.dataset]
         self.train_indices, self.test_indices = train_test_split(
-            range(len(self.dataset)), test_size=test_len, stratify=labels
+            range(len(self.dataset)), test_size=test_len
         )
         self.train_dataset = torch.utils.data.Subset(self.dataset, self.train_indices)
         self.test_dataset = torch.utils.data.Subset(self.dataset, self.test_indices)
-        valid_ratio = 0.1
-        valid_len = int(valid_ratio * len(self.train_dataset))
-        # train_len = int(len(self.train_dataset) - valid_len)
-        train_labels = [item[1] for item in self.train_dataset]
-        self.train_indices, self.valid_indices = train_test_split(
-            range(len(self.train_dataset)), test_size=valid_len, stratify=train_labels
-        )
-        self.train_dataset = torch.utils.data.Subset(self.train_dataset, self.train_indices)
-        self.valid_dataset = torch.utils.data.Subset(self.train_dataset, self.valid_indices)
         random.shuffle(self.train_indices)
-        random.shuffle(self.valid_indices)
+
         # Training
         start_time = time.time()
         self.model.train()
@@ -64,8 +55,6 @@ class FineTuneAudioClassifier:
         optimizer = torch.optim.Adam(classifier.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
         train_losses = []
-        valid_losses = []
-        best_valid_loss = float('inf')
         for epoch in range(num_epochs):
             train_loss = 0
             for i in tqdm(range(0, len(self.train_dataset), batch_size)):
@@ -85,32 +74,11 @@ class FineTuneAudioClassifier:
                 train_loss += loss.item()
             avg_train_loss = train_loss / len(self.train_dataset)
             train_losses.append(avg_train_loss)
-            self.model.eval()
-            valid_loss = 0
-            with torch.no_grad():
-                for i in tqdm(range(0, len(self.valid_dataset), batch_size)):
-                    i_end = min(i + batch_size, len(self.valid_dataset))
-                    audios = [self.dataset[self.valid_indices[j]][0] for j in range(i, i_end)]
-                    labels = [self.dataset[self.valid_indices[j]][1] for j in range(i, i_end)]
-                    inputs_audio = self.processor(audios=audios, sampling_rate=48000, return_tensors="pt", padding=True)
-                    inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
-                    audio_features = self.model.get_audio_features(**inputs_audio)
-                    outputs = classifier(audio_features)
-                    labels = [self.class_to_index[label] for label in labels]
-                    labels = torch.tensor(labels, dtype=torch.long, device=self.device)
-                    loss = criterion(outputs, labels)
-                    valid_loss += loss.item()
-            avg_valid_loss = valid_loss / len(self.valid_dataset)
-            valid_losses.append(avg_valid_loss)
-            print(
-                f"Epoch [{epoch + 1}/{num_epochs}], Training Loss: {avg_train_loss}, Validation Loss: {avg_valid_loss}")
-            if valid_loss < best_valid_loss:
-                best_valid_loss = valid_loss
-                torch.save(classifier.state_dict(), 'experiments/fine_tune_models/classifier.pth')
+            print(f"Epoch [{epoch + 1}/{num_epochs}], Training Loss: {avg_train_loss}")
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Total training time: {elapsed_time} seconds")
-        return train_losses, valid_losses
+        return train_losses
 
     def evaluate(self, classifier, batch_size=32):
         self.model.eval()
@@ -136,8 +104,6 @@ class FineTuneAudioClassifier:
             _, predicted = torch.max(outputs, 1)
             correct = (predicted == labels_tensor).sum().item()
             total_correct += correct
-            # true_labels.extend(labels)
-            # pred_labels.extend(predicted.tolist())
             true_labels.extend([self.index_to_class[label] for label in labels])
             pred_labels.extend([self.index_to_class[pred] for pred in predicted.tolist()])
         avg_loss = total_loss / len_test_dataset
@@ -145,9 +111,8 @@ class FineTuneAudioClassifier:
         print(f"During Evaluation in unseen data metrics are -> Average loss: {avg_loss}, Accuracy: {accuracy}")
         return avg_loss, accuracy, true_labels, pred_labels
 
-    def plot_loss(self, train_losses, valid_losses):
+    def plot_loss(self, train_losses):
         plt.plot(train_losses, label='Training loss')
-        plt.plot(valid_losses, label='Validation loss')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.xticks(rotation=90)
