@@ -3,6 +3,7 @@ from experiments.text_to_audio import Text2Audio
 from experiments.fine_tune_audio_classification import FineTuneAudioClassifier
 import utils
 import torch.nn as nn
+import torch
 
 
 def main():
@@ -55,20 +56,33 @@ def main():
         similarities = text2audio.get_similarities(audio_embeddings)
         top_indices = text2audio.get_top_indices(similarities, k=5)
         idx = top_indices[0]
+        print(f"The audio file name is: {text2audio.dataset.filenames[idx]}")
+        print(f"The label of the audio is: {text2audio.dataset.labels[idx]}")
         text2audio.dataset.display_waveform(idx)
         text2audio.dataset.display_spectrogram(idx)
         text2audio.dataset.play_audio(idx)
+        # # Print the top 5 most similar audio files and their similarity scores
+        for idx in top_indices:
+            print(f"Cosine Similarity: {similarities[idx]}")
+            print(f"Audio file: {text2audio.dataset.filenames[idx]}")
+            print(f"Label: {text2audio.dataset.filenames[idx]}")
+            print(f"Index: {idx}")
+            text2audio.dataset.play_audio(idx)
+            print("")
 
     elif experiment == 'Fine-tune Audio Classification':
         fine_tune_audio_classifier = FineTuneAudioClassifier(**experiment_config)
         classifier = nn.Linear(512, fine_tune_audio_classifier.num_classes)
-        train_losses = fine_tune_audio_classifier.train(classifier, num_epochs=3)
+        train_losses = fine_tune_audio_classifier.train(classifier, num_epochs=10)
         avg_loss, accuracy, true_labels, pred_labels = fine_tune_audio_classifier.evaluate(classifier)
         fine_tune_audio_classifier.plot_loss(train_losses)
         fine_tune_audio_classifier.plot_confusion_matrix(true_labels, pred_labels)
+        classifier.load_state_dict(torch.load('experiments/fine_tune_models/fine_tuned_clap_model.pth'))
+        audio_path = 'audios/emotions/happy/happy_audio_segment_9.wav'
+        fine_tune_audio_classifier.predict(audio_path, classifier)
 
     else:
-        print("Invalid choice.")
+        print("Invalid choice...")
 
 if __name__ == "__main__":
     main()

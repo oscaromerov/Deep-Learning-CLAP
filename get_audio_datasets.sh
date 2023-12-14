@@ -3,6 +3,31 @@
 # Create a directory for the dataset if it doesn't exist
 [ -d audios ] || mkdir audios
 
+# Download ESC-50
+if [ "$(find audios/ESC-50/ -type f | wc -l)" -eq 0 ]; then
+    echo "Downloading ESC-50..."
+    [ -d audios/ESC-50 ] || mkdir audios/ESC-50
+    curl -L -o audios/ESC-50/ESC-50.zip https://github.com/karoldvl/ESC-50/archive/master.zip
+    unzip audios/ESC-50/ESC-50.zip -d audios/ESC-50/
+    rm audios/ESC-50/ESC-50.zip
+    echo "ESC-50 has been downloaded."
+else
+    echo "ESC-50 Dataset has been already downloaded."
+fi
+
+# Download GTZAN
+# NOTE: GTZAN url is not available anymore, so it needs to be downloaded manually
+if [ "$(find audios/GTZAN/ -type f | wc -l)" -eq 0 ]; then
+    echo "Downloading GTZAN..."
+    [ -d audios/GTZAN ] || mkdir audios/GTZAN
+    curl -L -o audios/GTZAN/GTZAN.zip http://opihi.cs.uvic.ca/sound/genres.tar.gz
+    unzip audios/GTZAN/GTZAN.zip -d audios/GTZAN/
+    rm audios/GTZAN/GTZAN.zip
+    echo "GTZAN has been downloaded."
+else
+    echo "GTZAN Dataset has been already downloaded."
+fi
+
 echo "Downloading Audio Datasets, this operation can take a couple of minutes..."
 # Download FSD50K
 if [ "$(find audios/FSD50K/ -type f | wc -l)" -eq 0 ]; then
@@ -15,54 +40,5 @@ if [ "$(find audios/FSD50K/ -type f | wc -l)" -eq 0 ]; then
 else
     echo "FSD50K Dataset has been already downloaded."
 fi
-
-# Download Clotho # NEED TO BE FIXED
-#if [ "$(find audios/Clotho/ -type f | wc -l)" -eq 0 ]; then
-#    echo "Downloading Clotho..."
-#    [ -d audios/Clotho ] || mkdir audios/Clotho
-#    curl -L -C - -o audios/Clotho/3490684.zip https://zenodo.org/record/3490684/3490684.zip
-#    unzip audios/Clotho/3490684.zip -d audios/Clotho/
-#    rm audios/Clotho/3490684.zip
-#    echo "Clotho has been downloaded."
-#else
-#    echo "Clotho Dataset has been already downloaded."
-#fi
-
-# Download UrbanSound8K
-if [ "$(find audios/UrbanSound8K/ -type f | wc -l)" -eq 0 ]; then
-    echo "Downloading UrbanSound8K..."
-    [ -d audios/UrbanSound8K ] || mkdir audios/UrbanSound8K
-    curl -L -C - -o audios/UrbanSound8K/UrbanSound8K.tar.gz https://zenodo.org/record/1203745/files/UrbanSound8K.tar.gz
-    tar -xzf audios/UrbanSound8K/UrbanSound8K.tar.gz -C audios/UrbanSound8K/
-    rm audios/UrbanSound8K/UrbanSound8K.tar.gz
-    echo "UrbanSound8K has been downloaded."
-else
-    echo "UrbanSound8K Dataset has been already downloaded."
-fi
-
-# Download ESC-50
-if [ "$(find audios/ESC-50/ -type f | wc -l)" -eq 0 ]; then
-    echo "Downloading ESC-50..."
-    [ -d audios/ESC-50 ] || mkdir audios/ESC-50
-    curl -L -o audios/ESC-50/ESC-50.zip https://github.com/karoldvl/ESC-50/archive/master.zip
-    unzip audios/ESC-50/ESC-50.zip -d audios/ESC-50/
-    rm audios/ESC-50/ESC-50.zip
-    echo "ESC-50 has been downloaded."
-else
-    echo "ESC-50 Dataset has been already downloaded."
-fi
-#
-## Download GTZAN
-#if [ "$(find audios/GTZAN/ -type f | wc -l)" -eq 0 ]; then
-#    echo "Downloading GTZAN..."
-#    [ -d audios/GTZAN ] || mkdir audios/GTZAN
-#    curl -L -o audios/GTZAN/GTZAN.zip http://opihi.cs.uvic.ca/sound/genres.tar.gz
-#    unzip audios/GTZAN/GTZAN.zip -d audios/GTZAN/
-#    rm audios/GTZAN/GTZAN.zip
-#    echo "GTZAN has been downloaded."
-#else
-#    echo "GTZAN Dataset has been already downloaded."
-#fi
-
 
 chmod -R 777 audios

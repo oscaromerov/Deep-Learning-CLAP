@@ -30,7 +30,8 @@ class FineTuneAudioClassifier:
         self.index_to_class = {index: class_name for class_name, index in self.class_to_index.items()}
         print(f"Running {dataset_class} dataset with lenght: {len(self.dataset)}")
 
-    def train(self, classifier, num_epochs: int = 10, batch_size: int = 32, lr: float = 0.01):
+    def train(self, classifier, num_epochs: int = 10, batch_size: int = 32, lr: float = 0.01,
+              name_of_model_to_save: str = 'fine_tuned_clap_model'):
         # Data preparation
         train_len = int(0.8 * len(self.dataset))
         test_len = int(len(self.dataset) - train_len)
@@ -78,6 +79,7 @@ class FineTuneAudioClassifier:
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Total training time: {elapsed_time} seconds")
+        torch.save(classifier.state_dict(), f"experiments/fine_tune_models/{name_of_model_to_save}.pth")
         return train_losses
 
     def evaluate(self, classifier, batch_size=32):
@@ -125,44 +127,14 @@ class FineTuneAudioClassifier:
         disp.plot(include_values=True, cmap='viridis', ax=None, xticks_rotation='vertical')
         plt.show()
         
-    def predict(self, audio_path):
-        self.model.eval() #set the model to evaluation mode
-        # Load the waveform from the audio file using librosa
-        waveform = librosa.load(audio_path, sr=None)[0]
-        # Parse the waveform into CLAP's expected format
+    def predict(self, audio_path, classifier):
+        self.model.eval()
+        waveform, sr = librosa.load(audio_path, sr=None)
         inputs_audio = self.processor(audios=waveform, sampling_rate=48000, return_tensors="pt", padding=True)
         inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
-        #extract features
         audio_features = self.model.get_audio_features(**inputs_audio)
-
         with torch.no_grad(): #don't calculate gradients as we are not updating the weights during prediction
-            outputs = self.model(audio_features) 
+            outputs = classifier(audio_features)
             _, predicted = torch.max(outputs, 1) #get the class with the highest probability
             predicted_class = self.index_to_class[predicted.item()] # convert the class index to class name
-
-        return predicted_class
-
-# Initialize the FineTuneAudioClassifier
-# metadata_path = "audios/GTZAN/features_30_sec.csv"
-# audio_dir = "audios/GTZAN/genres_original"
-# dataset_class = 'GTZAN'
-# model_id = "laion/larger_clap_music_and_speech"
-# fine_tune_audio_classifier = FineTuneAudioClassifier(metadata_path, audio_dir, dataset_class, model_id)
-
-# Prepare datasets
-# fine_tune_audio_classifier.prepare_datasets()
-
-# Define the classifier model
-# classifier = nn.Linear(512, fine_tune_audio_classifier.num_classes)
-#
-# # Train the model
-# train_losses, valid_losses = fine_tune_audio_classifier.train(classifier, num_epochs=2)
-#
-# # Evaluate the model
-# avg_loss, accuracy, true_labels, pred_labels = fine_tune_audio_classifier.evaluate(classifier)
-#
-# # train_losses, valid_losses, elapsed_time = fine_tune_audio_classifier.train(classifier)
-# fine_tune_audio_classifier.plot_loss(train_losses, valid_losses)
-# fine_tune_audio_classifier.plot_confusion_matrix(true_labels, pred_labels)
-# good_predictions, bad_predictions, acc, true_labels, pred_labels = fine_tune_audio_classifier.predict_and_evaluate(batch_size=32)
-# fine_tune_audio_classifier.plot_classified_labels(good_predictions, bad_predictions)
+        print(f"The predicted class for the audio file {audio_path} is {predicted_class}.")
