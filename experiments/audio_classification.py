@@ -123,7 +123,23 @@ class AudioClassifier:
         plt.title('Confusion Matrix')
 
         plt.show()
+        
+    def predict(self, audio_path):
+        self.model.eval() # Set the model to evaluation mode
+        # Load the waveform from the audio file using librosa
+        waveform, _ = librosa.load(audio_path, sr=None)
+        inputs_audio = self.processor(audios=waveform, sampling_rate=48000, return_tensors="pt", padding=True)
+        inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
 
+        with torch.no_grad(): # Don't calculate gradients in prediction mode
+            outputs_audio = self.model.get_audio_features(**inputs_audio)
+        audio_emb = outputs_audio.detach().cpu().numpy()
+        assert audio_emb.shape[1] == self.text_emb.shape[1], "Audio and text embeddings must have the same dimension"
+        scores = np.dot(audio_emb, self.text_emb.T)
+        predicted_class_index = np.argmax(scores, axis=1)
+        predicted_class = self.classes[predicted_class_index[0]]
+
+        return predicted_class
 # test MusicSentimentDataset
 # metadata_path = "audios/emotions/emotions_music_labels.csv"
 # audio_dir = "audios/emotions"

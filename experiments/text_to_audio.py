@@ -12,7 +12,7 @@ class Text2Audio:
         # Define Dataset to use
         if dataset_class == 'ESC50':
             self.dataset = ESC50Dataset(metadata_path, audio_dir)
-        elif dataset_class == 'GTZAN':
+        elif dataset_class == 'GTZAN' or dataset_class == "MusicGen":
             self.dataset = GTZANDataset(metadata_path, audio_dir)
         elif dataset_class == 'MusicSentiment':
             self.dataset = MusicSentimentDataset(metadata_path, audio_dir)

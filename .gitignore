@@ -3,3 +3,9 @@ venv/
 venv-clap/
 .DS_Store
 .idea/
+__pycache__/
+audio_datasets/__pycache__/__init__.cpython-310.pyc
+audio_datasets/__pycache__/audio_dataset.cpython-310.pyc
+experiments/__pycache__/audio_classification.cpython-310.pyc
+experiments/__pycache__/fine_tune_audio_classification.cpython-310.pyc
+experiments/__pycache__/text_to_audio.cpython-310.pyc

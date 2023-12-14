@@ -9,8 +9,12 @@ import time
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+<<<<<<< HEAD
 import pandas as pd
 
+=======
+import librosa
+>>>>>>> main
 
 class FineTuneAudioClassifier:
     def __init__(self, metadata_path, audio_dir, dataset_class, model_id):
@@ -38,6 +42,7 @@ class FineTuneAudioClassifier:
 
         # Split indices into train and test
         self.train_indices, self.test_indices = train_test_split(
+<<<<<<< HEAD
             range(len(self.dataset)), test_size=test_len, random_state=46, shuffle=True)
 
         # Split train indices into train and validation
@@ -56,6 +61,13 @@ class FineTuneAudioClassifier:
         print("Number of samples in validation set:", len(self.valid_dataset))
         print("Number of samples in test set:", len(self.test_dataset))
 
+=======
+            range(len(self.dataset)), test_size=test_len
+        )
+        self.train_dataset = torch.utils.data.Subset(self.dataset, self.train_indices)
+        self.test_dataset = torch.utils.data.Subset(self.dataset, self.test_indices)
+        random.shuffle(self.train_indices)
+>>>>>>> main
 
         # Training
         start_time = time.time()
@@ -70,8 +82,6 @@ class FineTuneAudioClassifier:
         optimizer = torch.optim.Adam(classifier.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
         train_losses = []
-        valid_losses = []
-        best_valid_loss = float('inf')
         for epoch in range(num_epochs):
             train_loss = 0
             test_classes = set([self.test_dataset[j][1] for j in range(test_len)])
@@ -95,32 +105,11 @@ class FineTuneAudioClassifier:
                 train_loss += loss.item()
             avg_train_loss = train_loss / len(self.train_dataset)
             train_losses.append(avg_train_loss)
-            self.model.eval()
-            valid_loss = 0
-            with torch.no_grad():
-                for i in tqdm(range(0, len(self.valid_dataset), batch_size)):
-                    i_end = min(i + batch_size, len(self.valid_dataset))
-                    audios = [self.dataset[self.valid_indices[j]][0] for j in range(i, i_end)]
-                    labels = [self.dataset[self.valid_indices[j]][1] for j in range(i, i_end)]
-                    inputs_audio = self.processor(audios=audios, sampling_rate=48000, return_tensors="pt", padding=True)
-                    inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
-                    audio_features = self.model.get_audio_features(**inputs_audio)
-                    outputs = classifier(audio_features)
-                    labels = [self.class_to_index[label] for label in labels]
-                    labels = torch.tensor(labels, dtype=torch.long, device=self.device)
-                    loss = criterion(outputs, labels)
-                    valid_loss += loss.item()
-            avg_valid_loss = valid_loss / len(self.valid_dataset)
-            valid_losses.append(avg_valid_loss)
-            print(
-                f"Epoch [{epoch + 1}/{num_epochs}], Training Loss: {avg_train_loss}, Validation Loss: {avg_valid_loss}")
-            if valid_loss < best_valid_loss:
-                best_valid_loss = valid_loss
-                torch.save(classifier.state_dict(), 'experiments/fine_tune_models/classifier.pth')
+            print(f"Epoch [{epoch + 1}/{num_epochs}], Training Loss: {avg_train_loss}")
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"Total training time: {elapsed_time} seconds")
-        return train_losses, valid_losses
+        return train_losses
 
     def evaluate(self, classifier, batch_size=32):
         self.model.eval()
@@ -146,8 +135,6 @@ class FineTuneAudioClassifier:
             _, predicted = torch.max(outputs, 1)
             correct = (predicted == labels_tensor).sum().item()
             total_correct += correct
-            # true_labels.extend(labels)
-            # pred_labels.extend(predicted.tolist())
             true_labels.extend([self.index_to_class[label] for label in labels])
             pred_labels.extend([self.index_to_class[pred] for pred in predicted.tolist()])
         avg_loss = total_loss / len_test_dataset
@@ -155,9 +142,8 @@ class FineTuneAudioClassifier:
         print(f"During Evaluation in unseen data metrics are -> Average loss: {avg_loss}, Accuracy: {accuracy}")
         return avg_loss, accuracy, true_labels, pred_labels
 
-    def plot_loss(self, train_losses, valid_losses):
+    def plot_loss(self, train_losses):
         plt.plot(train_losses, label='Training loss')
-        plt.plot(valid_losses, label='Validation loss')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.xticks(rotation=90)
@@ -169,7 +155,23 @@ class FineTuneAudioClassifier:
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=self.classes)
         disp.plot(include_values=True, cmap='viridis', ax=None, xticks_rotation='vertical')
         plt.show()
+        
+    def predict(self, audio_path):
+        self.model.eval() #set the model to evaluation mode
+        # Load the waveform from the audio file using librosa
+        waveform = librosa.load(audio_path, sr=None)[0]
+        # Parse the waveform into CLAP's expected format
+        inputs_audio = self.processor(audios=waveform, sampling_rate=48000, return_tensors="pt", padding=True)
+        inputs_audio = {key: value.to(self.device) for key, value in inputs_audio.items()}
+        #extract features
+        audio_features = self.model.get_audio_features(**inputs_audio)
 
+        with torch.no_grad(): #don't calculate gradients as we are not updating the weights during prediction
+            outputs = self.model(audio_features) 
+            _, predicted = torch.max(outputs, 1) #get the class with the highest probability
+            predicted_class = self.index_to_class[predicted.item()] # convert the class index to class name
+
+        return predicted_class
 
 # Initialize the FineTuneAudioClassifier
 # metadata_path = "audios/GTZAN/features_30_sec.csv"
