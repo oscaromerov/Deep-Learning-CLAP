@@ -4,19 +4,19 @@ from pydub import AudioSegment
 
 # Step 1: Define Input Audios and Output Folder
 input_audios = {
-    'Blues': '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Blues.mp3',
-    'Classical': '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Classical.mp3',
-    'Contry': '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Contry.mp3',
-    'Disco': '/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Disco.mp3',
-    'Hiphop' : "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Hiphop.mp3",
-    'Jazz': "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Jazz.mp3",
-    'Metal': "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Metal.mp3",
-    'Pop': "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Pop.mp3",
-    'Reggae': "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Reggae.mp3",
-    'Rock': "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/Rock.mp3"
+    'Blues': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Blues.mp3',
+    'Classical': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Classical.mp3',
+    'Contry': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Contry.mp3',
+    'Disco': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Disco.mp3',
+    'Hiphop' : "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Hiphop.mp3",
+    'Jazz': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Jazz.mp3",
+    'Metal': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Metal.mp3",
+    'Pop': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Pop.mp3",
+    'Reggae': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Reggae.mp3",
+    'Rock': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Rock.mp3"
 }
 
-output_folder = "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/GenresDataSet"
+output_folder = "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/GenresDataSet"
 
 # Step 2: Create Output Folder if Not Exists
 os.makedirs(output_folder, exist_ok=True)

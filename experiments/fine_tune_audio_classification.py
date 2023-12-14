@@ -9,6 +9,7 @@ import time
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class FineTuneAudioClassifier:
@@ -16,7 +17,7 @@ class FineTuneAudioClassifier:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         if dataset_class == 'ESC50':
             self.dataset = ESC50Dataset(metadata_path, audio_dir)
-        elif dataset_class == 'GTZAN':
+        elif dataset_class == 'GTZAN' or dataset_class == "MusicGen":
             self.dataset = GTZANDataset(metadata_path, audio_dir)
         elif dataset_class == 'MusicSentiment':
             self.dataset = MusicSentimentDataset(metadata_path, audio_dir)
@@ -28,29 +29,34 @@ class FineTuneAudioClassifier:
         self.num_classes = len(self.classes)
         self.class_to_index = {class_name: index for index, class_name in enumerate(self.classes)}
         self.index_to_class = {index: class_name for class_name, index in self.class_to_index.items()}
-        print(f"Running {dataset_class} dataset with lenght: {len(self.dataset)}")
+        print(f"Running {dataset_class} dataset with lenght: {len(self.dataset)} classifying this number of clases: {self.classes}")
 
     def train(self, classifier, num_epochs: int = 10, batch_size: int = 32, lr: float = 0.01):
         # Data preparation
         train_len = int(0.8 * len(self.dataset))
-        test_len = int(len(self.dataset) - train_len)
-        labels = [item[1] for item in self.dataset]
+        test_len = len(self.dataset) - train_len
+
+        # Split indices into train and test
         self.train_indices, self.test_indices = train_test_split(
-            range(len(self.dataset)), test_size=test_len, stratify=labels
-        )
-        self.train_dataset = torch.utils.data.Subset(self.dataset, self.train_indices)
-        self.test_dataset = torch.utils.data.Subset(self.dataset, self.test_indices)
+            range(len(self.dataset)), test_size=test_len, random_state=46, shuffle=True)
+
+        # Split train indices into train and validation
         valid_ratio = 0.1
-        valid_len = int(valid_ratio * len(self.train_dataset))
-        # train_len = int(len(self.train_dataset) - valid_len)
-        train_labels = [item[1] for item in self.train_dataset]
+        valid_len = int(valid_ratio * train_len)
         self.train_indices, self.valid_indices = train_test_split(
-            range(len(self.train_dataset)), test_size=valid_len, stratify=train_labels
+            self.train_indices, test_size=valid_len, random_state=46, shuffle=True
         )
-        self.train_dataset = torch.utils.data.Subset(self.train_dataset, self.train_indices)
-        self.valid_dataset = torch.utils.data.Subset(self.train_dataset, self.valid_indices)
-        random.shuffle(self.train_indices)
-        random.shuffle(self.valid_indices)
+
+        # Create subsets
+        self.train_dataset = torch.utils.data.Subset(self.dataset, self.train_indices)
+        self.valid_dataset = torch.utils.data.Subset(self.dataset, self.valid_indices)
+        self.test_dataset = torch.utils.data.Subset(self.dataset, self.test_indices)
+
+        print("Number of samples in train set:", len(self.train_dataset))
+        print("Number of samples in validation set:", len(self.valid_dataset))
+        print("Number of samples in test set:", len(self.test_dataset))
+
+
         # Training
         start_time = time.time()
         self.model.train()
@@ -68,6 +74,10 @@ class FineTuneAudioClassifier:
         best_valid_loss = float('inf')
         for epoch in range(num_epochs):
             train_loss = 0
+            test_classes = set([self.test_dataset[j][1] for j in range(test_len)])
+            print("Classes in the test set:", test_classes)
+            train_classes = set([self.train_dataset[j][1] for j in range(train_len)])
+            print("Classes in the test set:", train_classes)
             for i in tqdm(range(0, len(self.train_dataset), batch_size)):
                 i_end = min(i + batch_size, len(self.train_dataset))
                 audios = [self.dataset[self.train_indices[j]][0] for j in range(i, i_end)]

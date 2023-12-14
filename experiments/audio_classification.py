@@ -17,7 +17,7 @@ class AudioClassifier:
         self.dataset_class = dataset_class
         if self.dataset_class == 'ESC50':
             self.dataset = ESC50Dataset(metadata_path, audio_dir)
-        elif self.dataset_class == 'GTZAN':
+        elif self.dataset_class == 'GTZAN' or self.dataset_class == "MusicGen":
             self.dataset = GTZANDataset(metadata_path, audio_dir)
         elif self.dataset_class == 'MusicSentiment':
             self.dataset = MusicSentimentDataset(metadata_path, audio_dir)
@@ -72,6 +72,8 @@ class AudioClassifier:
                 true_predictions.append(1)
                 good_predictions[label] += 1
             else:
+                true_labels.append(label)
+                pred_labels.append(self.classes[predictions[i]])
                 true_predictions.append(0)
                 bad_predictions[label] += 1
         accuracy = sum(true_predictions) / len(true_predictions)
@@ -98,9 +100,28 @@ class AudioClassifier:
         plt.show()
 
     def get_confusion_matrix(self, true_labels, pred_labels):
-        cm = confusion_matrix(true_labels, pred_labels, labels=self.classes)
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=self.classes)
-        disp.plot(include_values=True, cmap='viridis', ax=None, xticks_rotation='vertical')
+        # Assuming true_labels and pred_labels are lists or arrays containing the true and predicted labels
+        true_labels_array = np.array(true_labels)
+        pred_labels_array = np.array(pred_labels)
+
+        # Get the unique class labels
+        classes = np.unique(np.concatenate((true_labels_array, pred_labels_array)))
+
+        # Compute confusion matrix
+        cm = confusion_matrix(true_labels_array, pred_labels_array, labels=classes)
+
+        # Display the confusion matrix
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=np.sort(classes))
+
+        # Set the size of the graph
+        fig, ax = plt.subplots(figsize=(12, 12))
+
+        # Use display_labels to show all labels
+        disp.plot(include_values=True, cmap='viridis', ax=ax, xticks_rotation='vertical')
+
+        # Add title or any other customization if needed
+        plt.title('Confusion Matrix')
+
         plt.show()
 
 # test MusicSentimentDataset
