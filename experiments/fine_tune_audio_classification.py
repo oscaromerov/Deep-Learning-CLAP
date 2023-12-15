@@ -59,10 +59,6 @@ class FineTuneAudioClassifier:
         train_losses = []
         for epoch in range(num_epochs):
             train_loss = 0
-            test_classes = set([self.test_dataset[j][1] for j in range(test_len)])
-            print("Classes in the test set:", test_classes)
-            train_classes = set([self.train_dataset[j][1] for j in range(train_len)])
-            print("Classes in the test set:", train_classes)
             for i in tqdm(range(0, len(self.train_dataset), batch_size)):
                 i_end = min(i + batch_size, len(self.train_dataset))
                 audios = [self.dataset[self.train_indices[j]][0] for j in range(i, i_end)]

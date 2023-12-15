@@ -36,4 +36,4 @@ There are 3 main experiments available on this project:
 - Text to audio retrieval
 - Fine-Tune Audio Classification
 
-The result of some test cases for each experiment can be found in ```experiments/runnin_experimentst.ipynb``` this *Jupyter Notebook* gives a great understanding about the results and performing of each experiments for each task.
+The result of some test cases for each experiment can be found in ```experiments/runnin_experimentst.ipynb``` this *Jupyter Notebook* gives a great understanding about the results and performing of each experiments for each task. Inside the *Notebok* you can find the disscusion about each experiments and diferent escenarios with their respective results, so from there you can replicate a similar implementation by your own.

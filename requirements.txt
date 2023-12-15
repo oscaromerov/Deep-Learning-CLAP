@@ -9,3 +9,4 @@ tqdm
 seaborn
 ipython
 sounddevice
+pydub

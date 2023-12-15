@@ -2,21 +2,23 @@ import os
 import pandas as pd
 from pydub import AudioSegment
 
+os.chdir('/Users/oscar/repositories/Deep-Learning-CLAP')
+
 # Step 1: Define Input Audios and Output Folder
 input_audios = {
-    'Blues': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Blues.mp3',
-    'Classical': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Classical.mp3',
-    'Contry': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Contry.mp3',
-    'Disco': '/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Disco.mp3',
-    'Hiphop' : "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Hiphop.mp3",
-    'Jazz': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Jazz.mp3",
-    'Metal': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Metal.mp3",
-    'Pop': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Pop.mp3",
-    'Reggae': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Reggae.mp3",
-    'Rock': "/homes/r23ferna/Documents/Deep-Learning-CLAP/audios/Rock.mp3"
+    'blues': 'audios/Blues.mp3',
+    'classical': 'audios/Classical.mp3',
+    'contry': 'audios/Contry.mp3',
+    'disco': 'audios/Disco.mp3',
+    'hiphop' : "audios/Hiphop.mp3",
+    'jazz': "audios/Jazz.mp3",
+    'metal': "audios/Metal.mp3",
+    'pop': "audios/Pop.mp3",
+    'reggae': "audios/Reggae.mp3",
+    'rock': "audios/Rock.mp3"
 }
 
-output_folder = "/Users/fidenciofernandez/OneDrive/IMT/M1S2/DeepLearning/Proj/GenresDataSet200Samp"
+output_folder = "audios/GenresDataSet200Samp"
 
 # Step 2: Create Output Folder if Not Exists
 os.makedirs(output_folder, exist_ok=True)
@@ -37,8 +39,8 @@ def extract_audio_segments(audio_path, sentiment, output_folder, segment_duratio
 
         # Record information in the CSV file
         csv_data.append({
-            'Audio_File': segment_filename,
-            'Category': sentiment
+            'filename': segment_filename,
+            'label': sentiment
         })
 
         # Export audio segment as WAV file
